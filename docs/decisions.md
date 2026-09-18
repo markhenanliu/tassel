@@ -112,6 +112,19 @@ Each entry: the decision, the options considered, the reasoning, and what would 
 
 ---
 
+## D9. Public prototype keeps UCLA landmarks with no affiliation disclaimer
+
+**Date:** 2026-09-18
+**Decision:** The deployed V0 and public repo keep real UCLA location names and references. No "not affiliated" line is added.
+**Options considered:**
+- Keep as is
+- Replace UCLA-specific names with generic campus locations
+- Keep landmarks and add a one-line disclaimer to the demo banner
+**Why:** _Your words._
+**Revisit if:** _Your words._
+
+---
+
 # Assumptions made during the V0 build
 
 Made by Claude on 2026-09-18 at the author's direction ("make reasonable assumptions, document them and proceed"). Each is provisional until reviewed. Promote to a numbered decision, or reverse, when reviewed.
