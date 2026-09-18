@@ -66,7 +66,7 @@ export default async function ProfilePage({ params, searchParams }: PageProps<"/
         )}
         <div className="columns-2 gap-3 md:columns-3">
           {profile.portfolio.map((img) => (
-            <DemoImage key={img.id} image={img} className="mb-3 break-inside-avoid" />
+            <DemoImage key={img.id} image={img} linkCredit sizes="(min-width: 768px) 33vw, 50vw" className="mb-4 break-inside-avoid" />
           ))}
         </div>
       </section>

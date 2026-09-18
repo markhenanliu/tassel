@@ -134,10 +134,8 @@ export default async function SearchPage({ searchParams }: PageProps<"/search">)
               const href = `/photographers/${p.id}${date ? `?date=${date}` : ""}`;
               return (
                 <li key={p.id} className="flex flex-col gap-4 rounded-lg border border-stone-200 bg-white p-4 sm:flex-row">
-                  <Link href={href} className="grid w-full shrink-0 grid-cols-3 gap-1 sm:w-64">
-                    {p.portfolio.slice(0, 3).map((img) => (
-                      <DemoImage key={img.id} image={{ ...img, aspect: "square" }} showCaption={false} />
-                    ))}
+                  <Link href={href} className="block w-full shrink-0 sm:w-64">
+                    <DemoImage image={p.portfolio[0]} crop="landscape" sizes="(min-width: 640px) 256px, 100vw" showCaption={false} />
                   </Link>
                   <div className="flex-1">
                     <div className="flex flex-wrap items-baseline justify-between gap-2">

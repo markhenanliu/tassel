@@ -70,7 +70,7 @@ export default async function ComparePage() {
               <th className="w-40 p-3" />
               {profiles.map((p) => (
                 <th key={p.id} className="p-3 font-normal">
-                  <DemoImage image={{ ...p.portfolio[0], aspect: "landscape" }} showCaption={false} />
+                  <DemoImage image={p.portfolio[0]} crop="landscape" sizes="220px" showCaption={false} />
                   <Link href={`/photographers/${p.id}`} className="mt-2 block font-semibold hover:underline">
                     {profileUser(data, p).name}
                   </Link>

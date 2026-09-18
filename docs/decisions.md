@@ -125,6 +125,33 @@ Each entry: the decision, the options considered, the reasoning, and what would 
 
 ---
 
+## D10. Declining rejects the request, not the slot
+
+**Date:** 2026-09-18
+**Decision:** When a photographer declines, the request moves to `declined` and the slot returns to open. A photographer who is unavailable removes the slot separately.
+**Options considered:**
+- Decline releases the slot (chosen)
+- Decline also closes the slot
+- Ask the photographer on decline whether the slot is still available
+**Why:** _Your words._
+**Revisit if:** _Your words._
+
+---
+
+## D11. Portfolio images are Unsplash photos, credited to their real photographers
+
+**Date:** 2026-09-18
+**Decision:** Replace generated placeholders with 30 photos from Unsplash (free license only; Unsplash+ excluded), self-hosted in `public/demo/`. Every image shows "Demo image · Photo: <name> / Unsplash" wherever it appears; the profile page links each credit to the photo's Unsplash page. Captions describe what is in the photo and make no claim about where it was taken. Supersedes A8.
+**Options considered:**
+- Keep generated placeholders
+- Stock photos with a "Demo image" label only
+- Stock photos with a credit to the real photographer on every image (chosen)
+- Real portfolios from photographers, with permission (not available yet)
+**Why:** _Your words. Prompt: the discovery hypothesis depends on students judging visual style._
+**Revisit if:** _Your words. Prompt: when real photographers join the prototype walkthroughs._
+
+---
+
 # Assumptions made during the V0 build
 
 Made by Claude on 2026-09-18 at the author's direction ("make reasonable assumptions, document them and proceed"). Each is provisional until reviewed. Promote to a numbered decision, or reverse, when reviewed.
@@ -157,7 +184,7 @@ One week before College commencement, listed as June 11–13, 2027 (tentative) o
 
 The active persona, mode, shortlist, and actions taken during a walkthrough (requests sent, accepts, declines, cancellations, reviews, messages) are kept in cookies. Actions carry over when switching between personas in the same world, so a request sent as a student can be answered as the photographer. They are cleared when the world changes or on Reset. Nothing reaches a server store. Reason: a walkthrough needs a request sent on one screen to appear on the next.
 
-## A8. Portfolio images are generated placeholders
+## A8. Portfolio images are generated placeholders (superseded by D11)
 
 No real photographs. Each image is a generated gradient labeled as demo data. Reason: no licensed image set exists yet, and using others' work without permission conflicts with the README's portfolio ownership stance. Consequence: the feed cannot test visual style comparison, which is part of the discovery hypothesis.
 

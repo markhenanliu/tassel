@@ -33,12 +33,14 @@ export interface PhotographerProfile {
   // These are computed from bookings and reviews so fixtures cannot contradict themselves.
 }
 
-// A8: images are generated placeholders; `seed` drives the gradient.
+// D11: stock photos stand in for portfolio work, credited to their real photographers.
 export interface PortfolioImage {
   id: ID;
-  seed: number;
-  aspect: "portrait" | "landscape" | "square";
+  src: string;
+  width: number;
+  height: number;
   caption?: string;
+  credit: { name: string; unsplashId: string };
   postedAt: ISODateTime; // feed orders by this
 }
 

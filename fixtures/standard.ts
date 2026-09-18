@@ -1,6 +1,7 @@
 // Standard world: the marketplace one week before commencement.
 // All people, work, and reviews here are synthetic.
 import { at, dayRange } from "./clock";
+import { demoPhotos } from "./demo-photos";
 import type {
   Booking,
   Dataset,
@@ -78,18 +79,19 @@ export const fillerStudents: User[] = fillerNames.map((name, i) => ({
 
 // ---------- Profiles ----------
 
-let seedCounter = 1;
-function portfolio(profileKey: string, captions: string[], firstPosted: string): PortfolioImage[] {
-  const aspects: PortfolioImage["aspect"][] = ["portrait", "landscape", "square", "portrait", "portrait", "landscape"];
-  return captions.map((caption, i) => {
+// Portfolio posts are spaced three days apart starting from firstPosted.
+function portfolio(profileKey: string, firstPosted: string): PortfolioImage[] {
+  return demoPhotos[profileKey].map((photo, i) => {
     const day = new Date(`2027-${firstPosted}T12:00:00-07:00`);
     day.setUTCDate(day.getUTCDate() + i * 3);
     const md = `${String(day.getUTCMonth() + 1).padStart(2, "0")}-${String(day.getUTCDate()).padStart(2, "0")}`;
     return {
       id: `img-${profileKey}-${i + 1}`,
-      seed: seedCounter++,
-      aspect: aspects[i % aspects.length],
-      caption,
+      src: photo.file,
+      width: photo.width,
+      height: photo.height,
+      caption: photo.caption,
+      credit: photo.credit,
       postedAt: at(md, "12:00"),
     };
   });
@@ -104,7 +106,7 @@ const profiles: PhotographerProfile[] = [
     locationIds: ["loc-royce", "loc-janss", "loc-powell", "loc-murphy", "loc-palisades"],
     styleTags: ["candid", "golden hour", "family groups"],
     equipmentNotes: "Two bodies, 35mm and 85mm primes. Reflector and an assistant for groups over six.",
-    portfolio: portfolio("lena", ["Royce Hall at 6pm", "Family on Janss Steps", "Cap toss, Class of 2026", "Powell reading room", "Grandparents and graduate", "Palisades Park at sunset"], "04-20"),
+    portfolio: portfolio("lena", "04-20"),
   },
   {
     id: "p-jordan",
@@ -113,7 +115,7 @@ const profiles: PhotographerProfile[] = [
     hourlyRate: 8000,
     locationIds: ["loc-royce", "loc-inverted", "loc-westwood"],
     styleTags: ["candid", "flash"],
-    portfolio: portfolio("jordan", ["Flash portrait, Westwood", "Inverted Fountain", "Friends on Bruin Walk"], "05-20"),
+    portfolio: portfolio("jordan", "05-20"),
   },
   {
     id: "p-sam",
@@ -123,7 +125,7 @@ const profiles: PhotographerProfile[] = [
     locationIds: ["loc-murphy", "loc-powell", "loc-westwood"],
     styleTags: ["editorial", "black and white"],
     equipmentNotes: "Medium format digital. Sessions run a little slower.",
-    portfolio: portfolio("sam", ["Sculpture garden, black and white", "Editorial portrait, Powell", "Westwood rooftop", "Studio-style outdoor"], "05-02"),
+    portfolio: portfolio("sam", "05-02"),
   },
   {
     id: "p-aiden",
@@ -133,7 +135,7 @@ const profiles: PhotographerProfile[] = [
     locationIds: ["loc-janss", "loc-royce", "loc-griffith"],
     styleTags: ["film", "candid", "golden hour"],
     equipmentNotes: "Film scans in two weeks; digital previews in two days.",
-    portfolio: portfolio("aiden", ["Portra 400, Janss Steps", "Griffith lawn", "Royce arches on film", "Double exposure"], "04-28"),
+    portfolio: portfolio("aiden", "04-28"),
   },
   {
     id: "p-noor",
@@ -142,7 +144,7 @@ const profiles: PhotographerProfile[] = [
     hourlyRate: 14000,
     locationIds: ["loc-inverted", "loc-royce", "loc-murphy", "loc-palisades"],
     styleTags: ["golden hour", "candid"],
-    portfolio: portfolio("noor", ["Backlit on Royce quad", "Inverted Fountain at dusk", "Palisades Park", "Sculpture garden silhouette", "Blue hour"], "05-05"),
+    portfolio: portfolio("noor", "05-05"),
   },
   {
     id: "p-theo",
@@ -151,7 +153,7 @@ const profiles: PhotographerProfile[] = [
     hourlyRate: 6000,
     locationIds: ["loc-royce", "loc-janss", "loc-inverted", "loc-powell"],
     styleTags: ["candid"],
-    portfolio: portfolio("theo", ["Janss Steps, midday", "Diploma frame shot", "Friends at the fountain"], "05-12"),
+    portfolio: portfolio("theo", "05-12"),
   },
   {
     id: "p-chloe",
@@ -161,7 +163,7 @@ const profiles: PhotographerProfile[] = [
     locationIds: ["loc-westwood", "loc-palisades", "loc-griffith"],
     styleTags: ["editorial", "flash", "black and white"],
     equipmentNotes: "Strobes and a stylist on request.",
-    portfolio: portfolio("chloe", ["Lit portrait, Westwood", "Palisades editorial", "Griffith, strobe at dusk", "Black and white close-up", "Two graduates, editorial"], "04-24"),
+    portfolio: portfolio("chloe", "04-24"),
   },
 ];
 
@@ -307,7 +309,7 @@ msg("b-omar-lena", "u-lena", at("06-02", "11:15"), "Yes, if we start at 6:25 ins
 bookings.push({
   id: "b-hana-lena", slotId: slotId("lena", "06-12", "09:00"), studentUserId: "u-hana", photographerProfileId: "p-lena",
   locationId: "loc-powell", status: "declined", createdAt: at("06-02", "10:00"), respondedAt: at("06-02", "13:00"),
-  responseMessage: "I'm holding that morning for a family I shot last year. Noor and Aiden both have openings that weekend.",
+  responseMessage: "Powell's interior is closed for photos that morning. If Royce works instead, send the request again.",
 });
 msg("b-hana-lena", "u-hana", at("06-02", "10:01"), "Hi! Hoping for Powell in the morning before my ceremony.");
 
@@ -355,7 +357,7 @@ msg("b-priya-noor", "u-priya", at("06-03", "20:02"), "Hi Noor, is the fountain r
 bookings.push({
   id: "b-priya-aiden", slotId: slotId("aiden", "06-12", "08:30"), studentUserId: "u-priya", photographerProfileId: "p-aiden",
   locationId: "loc-janss", status: "declined", createdAt: at("06-01", "09:00"), respondedAt: at("06-01", "19:00"),
-  responseMessage: "I've taken a wedding that morning. Sorry.",
+  responseMessage: "Janss Steps is blocked off for ceremony setup that morning. I'd do Royce instead if you want to resend.",
 });
 msg("b-priya-aiden", "u-priya", at("06-01", "09:01"), "I'd love a film session on Janss Steps.");
 

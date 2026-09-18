@@ -38,7 +38,7 @@ export default async function FeedPage() {
           return (
             <Link key={image.id} href={`/photographers/${profile.id}`} className="mb-4 block break-inside-avoid">
               <DemoImage image={image} />
-              <div className="mt-2 flex items-baseline justify-between gap-2 text-sm">
+              <div className="mt-1 flex items-baseline justify-between gap-2 text-sm">
                 <span className="font-medium text-stone-900">{profileUser(data, profile).name}</span>
                 <span className="text-stone-600">{money(profile.hourlyRate)}/hr</span>
               </div>
