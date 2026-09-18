@@ -125,7 +125,7 @@ Each entry: the decision, the options considered, the reasoning, and what would 
 
 ---
 
-## D10. Declining rejects the request, not the slot
+## D10. Declining rejects the request, not the slot (extended by D12)
 
 **Date:** 2026-09-18
 **Decision:** When a photographer declines, the request moves to `declined` and the slot returns to open. A photographer who is unavailable removes the slot separately.
@@ -149,6 +149,33 @@ Each entry: the decision, the options considered, the reasoning, and what would 
 - Real portfolios from photographers, with permission (not available yet)
 **Why:** _Your words. Prompt: the discovery hypothesis depends on students judging visual style._
 **Revisit if:** _Your words. Prompt: when real photographers join the prototype walkthroughs._
+
+---
+
+## D12. Photographers set their own availability; decline can also close the slot
+
+**Date:** 2026-09-18
+**Decision:** Extends D10. Photographers get an availability editor: add a slot (date, start, length) and close an open slot. When declining a request, they choose Decline (slot stays open) or Decline & close slot. A closed slot keeps its record, since bookings still reference it, and is hidden from students. A slot with a pending request or accepted booking cannot be closed from the editor; it must be declined or cancelled first. New slots may not overlap an existing open slot of the same photographer.
+**Options considered:**
+- Decline only, slot always stays open (D10 as first written)
+- Decline always closes the slot
+- Two decline actions plus an availability editor (chosen)
+**Why:** _Your words._
+**Revisit if:** _Your words. Prompt: what walkthroughs show about how often photographers use each decline button, and whether slot entry is too much work (D2)._
+
+---
+
+## D13. A declined student sees the slot still open, and may request it again
+
+**Date:** 2026-09-18
+**Decision:** When a photographer declines without closing, the slot remains visible and requestable to everyone, including the declined student. The decline message stays optional.
+**Options considered:**
+- Require a decline reason so the student always sees why
+- Hide the slot from the declined student only
+- Accept that an open slot after a decline signals a personal rejection (chosen)
+- Allow or block a second request from the same student for the same slot (allowed)
+**Why:** _Your words._
+**Revisit if:** _Your words. Prompt: repeated requests from the same student after a decline, or students reading the open slot as rejection._
 
 ---
 

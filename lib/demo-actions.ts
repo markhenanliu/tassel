@@ -4,7 +4,9 @@ import type { Dataset, ID, Rating, Role } from "@/fixtures/types";
 
 export type DemoAction =
   | { t: "req"; id: ID; slotId: ID; locationId: ID; notes?: string; by: ID }
-  | { t: "resp"; id: ID; decision: "accepted" | "declined"; message?: string; by: ID }
+  | { t: "resp"; id: ID; decision: "accepted" | "declined"; message?: string; by: ID; closeSlot?: boolean }
+  | { t: "slot-add"; id: ID; profileId: ID; start: string; durationMinutes: number }
+  | { t: "slot-close"; id: ID }
   | { t: "cancel"; id: ID; role: Role; reason: string }
   | { t: "mark"; id: ID; outcome: "completed" | "no_show"; role: Role }
   | { t: "contest"; id: ID }
@@ -19,6 +21,7 @@ const stamp = (i: number) => new Date(Date.parse(DEMO_NOW) + (i + 1) * 60000).to
 export function applyActions(base: Dataset, actions: DemoAction[]): Dataset {
   const data: Dataset = {
     ...base,
+    slots: base.slots.map((x) => ({ ...x })),
     bookings: base.bookings.map((b) => ({ ...b })),
     messages: [...base.messages],
     reviews: [...base.reviews],
@@ -34,6 +37,16 @@ export function applyActions(base: Dataset, actions: DemoAction[]): Dataset {
       });
       return;
     }
+    if (a.t === "slot-add") {
+      data.slots.push({ id: a.id, photographerProfileId: a.profileId, start: a.start, durationMinutes: a.durationMinutes });
+      return;
+    }
+    if (a.t === "slot-close") {
+      const slot = data.slots.find((x) => x.id === a.id);
+      const held = data.bookings.some((x) => x.slotId === a.id && (x.status === "pending" || x.status === "accepted"));
+      if (slot && !held) slot.closedAt = at;
+      return;
+    }
     const b = data.bookings.find((x) => x.id === a.id);
     if (!b) return;
     switch (a.t) {
@@ -43,6 +56,10 @@ export function applyActions(base: Dataset, actions: DemoAction[]): Dataset {
         b.respondedAt = at;
         b.responseMessage = a.message;
         if (a.message) data.messages.push({ id: `dm-${i}`, bookingId: b.id, senderUserId: a.by, sentAt: at, body: a.message });
+        if (a.decision === "declined" && a.closeSlot) {
+          const slot = data.slots.find((x) => x.id === b.slotId);
+          if (slot) slot.closedAt = at;
+        }
         return;
       case "cancel":
         if (b.status !== "pending" && b.status !== "accepted") return;

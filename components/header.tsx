@@ -20,6 +20,7 @@ export async function Header() {
         ]
       : [
           { href: "/inbox", label: `Requests${pendingForMe ? ` (${pendingForMe})` : ""}` },
+          { href: "/availability", label: "Availability" },
           ...(viewerProfile ? [{ href: `/photographers/${viewerProfile.id}`, label: "My profile" }] : []),
           { href: "/", label: "Feed" },
         ];

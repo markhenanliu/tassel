@@ -62,7 +62,11 @@ export default async function BookingPage({ params, searchParams }: PageProps<"/
             <div className="flex gap-2">
               <button name="decision" value="accepted" className={btn.primary}>Accept</button>
               <button name="decision" value="declined" className={btn.secondary}>Decline</button>
+              <button name="decision" value="declined_close" className={btn.secondary}>Decline &amp; close slot</button>
             </div>
+            <p className="text-xs text-amber-900">
+              Decline keeps the slot open to other students. Decline &amp; close also removes it from your availability.
+            </p>
           </form>
         )}
 

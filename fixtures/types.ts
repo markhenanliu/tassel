@@ -54,11 +54,13 @@ export interface Location {
 // D2: fixed slots, each with its own length.
 // Not stored: whether the slot is held. A slot is unavailable when a booking
 // on it is pending or accepted (D3).
+// D12: a closed slot is kept (bookings still reference it) but hidden from students.
 export interface Slot {
   id: ID;
   photographerProfileId: ID;
   start: ISODateTime;
   durationMinutes: number;
+  closedAt?: ISODateTime;
 }
 
 // D5: request and booking are one object; status moves through the lifecycle.

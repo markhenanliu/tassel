@@ -24,7 +24,20 @@ export function holdingBooking(data: Dataset, slotId: ID): Booking | undefined {
 }
 
 export function isOpen(data: Dataset, slot: Slot): boolean {
-  return Date.parse(slot.start) > now() && !holdingBooking(data, slot.id);
+  return !slot.closedAt && Date.parse(slot.start) > now() && !holdingBooking(data, slot.id);
+}
+
+// D12: a photographer can close a slot unless a request or booking holds it.
+export function canCloseSlot(data: Dataset, slot: Slot): boolean {
+  return !slot.closedAt && Date.parse(slot.start) > now() && !holdingBooking(data, slot.id);
+}
+
+// Two slots of the same photographer may not overlap in time.
+export function overlappingSlot(data: Dataset, profileId: ID, start: number, durationMinutes: number): Slot | undefined {
+  const end = start + durationMinutes * 60000;
+  return data.slots.find(
+    (s) => s.photographerProfileId === profileId && !s.closedAt && Date.parse(s.start) < end && slotEnd(s) > start,
+  );
 }
 
 export function openSlots(data: Dataset, profileId: ID, day?: string): Slot[] {
@@ -33,9 +46,9 @@ export function openSlots(data: Dataset, profileId: ID, day?: string): Slot[] {
     .sort((a, b) => Date.parse(a.start) - Date.parse(b.start));
 }
 
-export function futureSlots(data: Dataset, profileId: ID): Slot[] {
+export function futureSlots(data: Dataset, profileId: ID, includeClosed = false): Slot[] {
   return data.slots
-    .filter((s) => s.photographerProfileId === profileId && Date.parse(s.start) > now())
+    .filter((s) => s.photographerProfileId === profileId && Date.parse(s.start) > now() && (includeClosed || !s.closedAt))
     .sort((a, b) => Date.parse(a.start) - Date.parse(b.start));
 }
 

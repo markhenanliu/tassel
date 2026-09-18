@@ -6,7 +6,7 @@ import { getPersona } from "@/fixtures/personas";
 import type { Rating, Role } from "@/fixtures/types";
 import { decodeActions, encodeActions, MAX_ACTIONS, type DemoAction } from "@/lib/demo-actions";
 import { getSession, COOKIE } from "@/lib/session";
-import { bookingById, holdingBooking, slotById } from "@/lib/derive";
+import { bookingById, canCloseSlot, holdingBooking, now, overlappingSlot, slotById } from "@/lib/derive";
 import { bookingView } from "@/lib/booking-view";
 
 const text = (v: FormDataEntryValue | null, max: number) => String(v ?? "").trim().slice(0, max);
@@ -68,7 +68,7 @@ export async function requestBooking(formData: FormData) {
   const slotId = text(formData.get("slotId"), 60);
   const slot = slotById(data, slotId);
   if (!viewer?.student || mode !== "student" || !slot) redirect(`/book/${slotId}`);
-  if (holdingBooking(data, slotId) || viewer.photographerProfileId === slot.photographerProfileId) redirect(`/book/${slotId}`);
+  if (slot.closedAt || holdingBooking(data, slotId) || viewer.photographerProfileId === slot.photographerProfileId) redirect(`/book/${slotId}`);
   const id = `b-demo-${Date.now().toString(36)}`;
   const ok = await record({
     t: "req", id, slotId, by: viewer.id,
@@ -81,8 +81,13 @@ export async function requestBooking(formData: FormData) {
 export async function respondToRequest(formData: FormData) {
   const { viewer, role } = await roleOn(text(formData.get("bookingId"), 60));
   if (!viewer || role !== "photographer") return;
-  const decision = formData.get("decision") === "accepted" ? "accepted" : "declined";
-  await record({ t: "resp", id: text(formData.get("bookingId"), 60), decision, by: viewer.id, message: text(formData.get("message"), 280) || undefined });
+  const raw = formData.get("decision");
+  const decision = raw === "accepted" ? "accepted" : "declined";
+  await record({
+    t: "resp", id: text(formData.get("bookingId"), 60), decision, by: viewer.id,
+    message: text(formData.get("message"), 280) || undefined,
+    closeSlot: raw === "declined_close" || undefined,
+  });
 }
 
 export async function cancelBooking(formData: FormData) {
@@ -127,4 +132,28 @@ export async function sendMessage(formData: FormData) {
   const body = text(formData.get("body"), 280);
   if (!viewer || !role || !body) return;
   await record({ t: "msg", id, by: viewer.id, body });
+}
+
+// D12: photographers manage their own availability.
+export async function addSlot(formData: FormData) {
+  const { data, viewerProfile } = await getSession();
+  if (!viewerProfile) return;
+  const date = text(formData.get("date"), 10);
+  const time = text(formData.get("time"), 5);
+  const durationMinutes = Number(formData.get("duration"));
+  if (!/^2027-\d\d-\d\d$/.test(date) || !/^\d\d:\d\d$/.test(time) || ![30, 45, 60, 90, 120].includes(durationMinutes)) {
+    redirect("/availability?error=invalid");
+  }
+  const start = `${date}T${time}:00-07:00`;
+  if (Date.parse(start) <= now()) redirect("/availability?error=past");
+  if (overlappingSlot(data, viewerProfile.id, Date.parse(start), durationMinutes)) redirect(`/availability?error=overlap&date=${date}`);
+  const ok = await record({ t: "slot-add", id: `s-demo-${Date.now().toString(36)}`, profileId: viewerProfile.id, start, durationMinutes });
+  redirect(ok ? `/availability?added=1&date=${date}` : "/availability?error=full");
+}
+
+export async function closeSlot(formData: FormData) {
+  const { data, viewerProfile } = await getSession();
+  const slot = slotById(data, text(formData.get("slotId"), 60));
+  if (!viewerProfile || !slot || slot.photographerProfileId !== viewerProfile.id || !canCloseSlot(data, slot)) return;
+  await record({ t: "slot-close", id: slot.id });
 }

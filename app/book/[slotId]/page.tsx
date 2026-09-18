@@ -18,6 +18,7 @@ export default async function BookPage({ params, searchParams }: PageProps<"/boo
 
   const blocked = (() => {
     if (Date.parse(slot.start) < now()) return { title: "This slot has passed", body: "Pick a later time from the profile." };
+    if (slot.closedAt) return { title: "This slot is no longer offered", body: "The photographer closed it. Pick another time from the profile." };
     if (viewer?.photographerProfileId === profile.id)
       return { title: "You can't book yourself", body: "This slot is on your own photographer profile." };
     if (mode !== "student")

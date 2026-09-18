@@ -21,6 +21,12 @@ for (const w of ["standard", "peakWeek", "launchDay"] as const) {
   }
   const holds = d.bookings.filter((b) => b.status === "pending" || b.status === "accepted").map((b) => b.slotId);
   if (new Set(holds).size !== holds.length) errs.push("double-held slot");
+  for (const s of d.slots) {
+    if (s.closedAt && holds.includes(s.id)) errs.push(`closed slot held ${s.id}`);
+    const start = Date.parse(s.start), end = start + s.durationMinutes * 60000;
+    const clash = d.slots.find((o) => o !== s && o.photographerProfileId === s.photographerProfileId && !o.closedAt && !s.closedAt && Date.parse(o.start) < end && Date.parse(o.start) + o.durationMinutes * 60000 > start);
+    if (clash) errs.push(`overlap ${s.id} / ${clash.id}`);
+  }
   const sid = d.slots.map((s) => s.id); if (new Set(sid).size !== sid.length) errs.push("dup slot ids");
   for (const m of d.messages) if (!d.bookings.find((b) => b.id === m.bookingId)) errs.push(`orphan msg ${m.id}`);
   console.log(w, `bookings=${d.bookings.length} slots=${d.slots.length}`, errs.length ? errs : "OK");

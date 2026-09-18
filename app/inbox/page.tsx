@@ -87,6 +87,9 @@ export default async function InboxPage({ searchParams }: PageProps<"/inbox">) {
                     <input type="hidden" name="bookingId" value={b.id} />
                     <button name="decision" value="accepted" className={btn.primary}>Accept</button>
                     <button name="decision" value="declined" className={btn.secondary}>Decline</button>
+                    <button name="decision" value="declined_close" className={btn.secondary} title="Decline and stop offering this time">
+                      Decline &amp; close slot
+                    </button>
                   </form>
                 )}
                 <Link href={`/bookings/${b.id}`} className={btn.secondary}>Details</Link>
