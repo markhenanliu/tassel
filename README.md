@@ -2,7 +2,7 @@
 
 A booking platform connecting graduating UCLA students with student photographers in the LA area.
 
-**Status:** building V0, a visual prototype with synthetic data.
+**Status:** WIP. V0, a visual prototype with synthetic data, is built and runs locally. Not yet deployed.
 
 ---
 
