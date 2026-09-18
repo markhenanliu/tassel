@@ -2,7 +2,7 @@
 
 A booking platform connecting graduating UCLA students with student photographers in the LA area.
 
-**Status:** WIP. V0, a visual prototype with synthetic data, is built and runs locally. Not yet deployed.
+**Status:** WIP. V0, a visual prototype with synthetic data, is deployed at https://tassel-eight.vercel.app.
 
 ---
 
